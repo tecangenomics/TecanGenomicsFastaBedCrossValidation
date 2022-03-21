@@ -176,15 +176,15 @@ class BEDLine:
     _contig:[str, int]
     _start:[str, int]
     _end:[str, int]
-    name:str=None,
+    name:str=""
     _score:[str, float]=None
     _strand:str="."
     thickStart:[str, int]=None
     thickEnd:[str, int]=None
-    rgb:str=None
+    rgb:str=""
     blockCount:[str, int]=None
-    blockSizes:str=None
-    blockStarts:str=None
+    blockSizes:str=""
+    blockStarts:str=""
     interval:[None, Interval]=None
     thickInterval: [None, Interval] = None
     sort_index:[None, tuple] = None
@@ -202,8 +202,6 @@ class BEDLine:
             self.thickInterval = None
         self.rgb = str(self.rgb)
         self.blockCount = self.processBlockCount(self.blockCount)
-        self.blockSizes = self.blockSizes
-        self.blockStarts = self.blockStarts
         self.sort_index = (self.interval, self.name)
 
     def processScore(self, score:[str, float, None]) -> [float, None]:
@@ -314,6 +312,7 @@ def processBEDStream(bedStream:typing.TextIO) -> typing.List[BEDLine]:
             continue
         if line.startswith("#"):
             continue
+        line = line.replace(" ", "\t")
         lineList = line.split("\t")
         lineLength = len(lineList)
         if bedFormat is None:

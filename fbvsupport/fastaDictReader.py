@@ -31,6 +31,8 @@ def processDictStream(dictStream:typing.TextIO) -> typing.List[FastaDictLine]:
             continue
         lineList = line.split("\t")
         lineList = [stripDictFieldPrefix(item) for item in lineList[1:]]
+        if len(lineList) == 3:
+            lineList.append("")
         contig, byteLength, md5Hash, uri  = lineList
         dictList.append(FastaDictLine(contig, byteLength, md5Hash, uri))
     return dictList
