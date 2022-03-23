@@ -205,7 +205,7 @@ class BEDLine:
         self.sort_index = (self.interval, self.name)
 
     def processScore(self, score:[str, float, None]) -> [float, None]:
-        if score is None:
+        if score is None or score == ".":
             return None
         try:
             score = float(score)
