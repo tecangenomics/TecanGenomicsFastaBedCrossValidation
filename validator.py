@@ -89,7 +89,7 @@ class ArgPack:
     @classmethod
     def fromArgv(cls):
         positionalArgs = sys.argv[1:]
-        if not len(positionalArgs) >= 2 and fbvsupport.gui.active:
+        if len(positionalArgs) == 0 and fbvsupport.gui.active:
                 positionalArgs = getFilePathsFromGUI()
         if not len(positionalArgs) >= 2:
                 print("Insufficient arguments passed and no active GUI")
