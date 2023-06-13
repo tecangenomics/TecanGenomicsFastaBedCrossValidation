@@ -4,7 +4,6 @@ import dataclasses
 from . import slottedDataClass
 
 
-#@dataclasses.dataclass(slots=True)
 @slottedDataClass.slottedDataClass(order=True, slots=True)
 class FastaIndexLine:
     contig:str
@@ -40,8 +39,8 @@ def processFaidxStream(faidxStream:typing.TextIO) -> typing.List[FastaIndexLine]
         if not line:
             continue
         lineList = line.split("\t")
-        contig, byteLength, startByte, lineBases, lineBytes = lineList
-        faidxList.append(FastaIndexLine(contig, byteLength, startByte, lineBases, lineBytes))
+        contig, baseLength, startByte, lineBases, lineBytes = lineList
+        faidxList.append(FastaIndexLine(contig, baseLength, startByte, lineBases, lineBytes))
     return faidxList
 
 

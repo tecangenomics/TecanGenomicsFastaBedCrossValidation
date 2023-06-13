@@ -18,6 +18,11 @@ This program will perform the following validations on FASTA and BED files:
 
 ## Quick Start Guide
 
+#### Running from GUI with or without the EXE file
+An EXE file is provided that should work with Windows 10 and 11 operating systems as a stand-alone executable.  When running this version, you will be first prompted for the reference genome file in a file selection dialog.  Following that, you will be prompted for BED files until you cancel the dialog (keep selecting as many BED files as you wish, then hit cancel on the file selection dialog to stop picking BED files).  After completing BED file selection, you will be prompted to select an output file for the JSON report.  Once that output file is selected, please watch the terminal to monitor the progress of the program and press the enter key when prompted to do so.
+
+Running without the GUI from the command line is also possible, but you will need a version of Tkinter installed in your local Python packages to support this usage. If Tkinter is already installed and can be called by the program, the GUI will automatically engage if the program is started with no arguments being passed.
+
 #### Command line
 
 This program uses positional arguments where the first argument will always be the FASTA file being validated and the last argument will be the path for the detailed validation report (in JSON format).  Between the FASTA and report paths can be any number of BED files to be cross validated against the FASTA file.
@@ -32,7 +37,7 @@ This can be run inside a container and a Dockerfile is included to facilitate th
 
 
 #### As an import
-You can also run validation as an imported library (useful if you want to call it from a Jupyter notebook).  To do this, first you will need to copy the package to a location where your Python interpreter can find it (try the current working directory or some location specified in your system's PYTHONPATH environment variable).  Once that is done you will need to import the package (assumed to be in a folder called bedFastaValidation below), and then call **validateFASTAAndBEDs** to generate the validation report.  This function requires the FASTA file to be the first parameter and can then take any number of BED files as parameters after the FASTA.  See below for an example:
+You can also run validation as an imported library (useful if you want to call it from a Jupyter notebook).  To do this, first you will need to copy the package to a location where your Python interpreter can find it (try the current working directory or some location specified in your system's PYTHONPATH environment variable).  You will need to trim off the last part of the extension (.deleteExtensionToAllowImport) of ```__init__.py.deleteExtensionToAllowImport```. Once that is done you will need to import the package (assumed to be in a folder called bedFastaValidation below), and then call **validateFASTAAndBEDs** to generate the validation report.  This function requires the FASTA file to be the first parameter and can then take any number of BED files as parameters after the FASTA.  See below for an example:
 ```
 import bedFastaValidation
 validationReport = bedFastaValidation.validateFASTAAndBEDs("path/to/myFastaFile.fa", "path/to/bed1.bed", "path/to/bed2.bed")

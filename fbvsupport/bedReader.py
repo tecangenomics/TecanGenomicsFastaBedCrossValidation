@@ -205,8 +205,10 @@ class BEDLine:
         self.sort_index = (self.interval, self.name)
 
     def processScore(self, score:[str, float, None]) -> [float, None]:
-        if score is None or score == ".":
+        if score is None:
             return None
+        if score == ".":
+            score = 0
         try:
             score = float(score)
         except ValueError:
@@ -215,7 +217,7 @@ class BEDLine:
                 self._errors.append(message)
             else:
                 raise BEDLineError(message)
-        if not 0 <= score <= 1000:
+        if type(score) in [float, int] and not 0 <= score <= 1000:
             message = "Score value was %s, but should be between 0 and 1000" %score
             if VALIDATIONRUN:
                 self._errors.append(message)
