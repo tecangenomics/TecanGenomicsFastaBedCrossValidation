@@ -62,9 +62,10 @@ Running this will generate a **ValidationReport** object with the following prop
 Prerequisites for running this program outside its container are relatively simple
 - Python interpreter
   - Version 3.7 or newer is required
-  - Version 3.10 is recommended as this program can leverage some new features to improve performance significantly
-- Samtools available on the command line
+  - Version 3.11 is recommended as this program can leverage some new features to improve performance significantly
+- Samtools available on the command line is no longer a hard requirement
   - This program will attempt to find the executable itself
+  - If Samtools cannot be found, this program will fall back on internal Python packages to collect the needed data from the FASTA file
 
 ## Versioning
 
