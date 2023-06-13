@@ -2,11 +2,7 @@ import os
 import sys
 import typing
 import traceback
-
-try:
-    from . import fbvsupport
-except ImportError:
-    import fbvsupport
+import fbvsupport
 
 
 TESTNAME = "FASTA and BED Validation"

@@ -8,6 +8,7 @@ from . import fastaDictReader
 from . import bedReader
 from . import samtoolsRunner
 from . import validationReport
+from . import versionInfo
 
 
 bedReader.VALIDATIONRUN = True
@@ -169,6 +170,7 @@ def validateBED(bedList:typing.List[bedReader.BEDLine]) -> list:
 
 
 def generateValidationReport(fastaPath:str, *bedPaths:str, verbose:bool=True) -> validationReport.ValidationReport:
+    print("Tecan Genomics FASTA and BED cross validator | Version: %s | Date: %s" % (versionInfo.VERSION, versionInfo.DATE))
     _VALIDATIONREPORT.addInput("FASTA", fastaPath)
     for bedPath in bedPaths:
         _VALIDATIONREPORT.addInput("BED", bedPath)

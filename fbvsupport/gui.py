@@ -20,7 +20,7 @@ if active:
         else:
             defaultBaseName = defaultFileName + "." + defaultExtension
         defaultFilePath = os.path.join(defaultDirectory, defaultBaseName)
-        file = tkinter.filedialog.asksaveasfile(initialfile=defaultFilePath, defaultextension=defaultExtension, filetypes=fileTypes)
+        file = tkinter.filedialog.asksaveasfilename(initialfile=defaultFilePath, defaultextension=defaultExtension, filetypes=fileTypes)
         return file
 
     def selectFileForOpening(prompt:str, defaultDirectory:str=defaultDirectory, fileTypes=(("All Files", "*.*"),)):
