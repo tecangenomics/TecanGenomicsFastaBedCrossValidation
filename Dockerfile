@@ -1,4 +1,4 @@
-FROM python:3.10.2
+FROM python:3.11.4
 MAINTAINER michael weinstein <michael.weinstein@tecan.com>
 
 USER root

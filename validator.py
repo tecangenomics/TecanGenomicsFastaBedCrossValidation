@@ -1,6 +1,7 @@
 import os
 import sys
 import typing
+import traceback
 
 try:
     from . import fbvsupport
@@ -14,6 +15,27 @@ TESTNAME = "FASTA and BED Validation"
 def printHelp():
     print("USAGE: python3 validator.py <input.fasta> [<in1.bed> <in2.bed> <inN.bed>] <output.json>")
     print("This program requires an input FASTA and an output file to be specified. BED files are optional, but can include as many as needed to validate against the FASTA.")
+
+
+def getFilePathsFromGUI() -> typing.List[str]:
+    fileList = []
+    fasta = fbvsupport.gui.selectFileForOpening("Select Reference Genome FASTA")
+    if not fasta:
+        raise ValueError("No FASTA reference genome was selected. Aborting analysis.")
+    fileList.append(os.path.abspath(fasta))
+    currentBED = True
+    while currentBED:
+        currentBED = fbvsupport.gui.selectFileForOpening("Select a BED file for analysis. Press CANCEL if all BED files have been selected.")
+        if not currentBED:
+            break
+        fileList.append(os.path.abspath(currentBED))
+    if not len(fileList) >= 2:
+        raise ValueError("No BED files were selected to analyze. Aborting analysis.")
+    outputFile = fbvsupport.gui.selectFileForSaving("Select validation report JSON output file.", defaultFileName="validationReport", defaultExtension="json")
+    if not outputFile:
+        raise ValueError("No output file selected. Aborting analysis.")
+    fileList.append(os.path.abspath(outputFile))
+    return fileList
 
 
 class ArgPack:
@@ -71,9 +93,12 @@ class ArgPack:
     @classmethod
     def fromArgv(cls):
         positionalArgs = sys.argv[1:]
+        if not len(positionalArgs) >= 2 and fbvsupport.gui.active:
+                positionalArgs = getFilePathsFromGUI()
         if not len(positionalArgs) >= 2:
-            printHelp()
-            quit(1)
+                print("Insufficient arguments passed and no active GUI")
+                printHelp()
+                quit(1)
         fasta = positionalArgs[0]
         output = positionalArgs[-1]
         beds = positionalArgs[1: -1]
@@ -99,8 +124,28 @@ def writeOutputFile(validationReport:fbvsupport.validationReport.ValidationRepor
     return outputPath
 
 
+class PointlessPlaceholderException(Exception):
+    pass
+
+
 if __name__ == "__main__":
-    args = parseArgs()
-    validationReport = validateFASTAAndBEDs(args.fastaFile, *args.bedFiles)
-    writeOutputFile(validationReport, args.outputFile)
-    print(validationReport)
+    exitStatus = 0
+    allOrNothingException = Exception
+    try:
+        args = parseArgs()
+        validationReport = validateFASTAAndBEDs(args.fastaFile, *args.bedFiles)
+        writeOutputFile(validationReport, args.outputFile)
+        print(validationReport)
+    except allOrNothingException as err:
+        print("Encountered an unhandled error as follows:")
+        traceback.print_exc()
+        print(err)
+        exitStatus = 1
+    finally:
+        if exitStatus == 0:
+            message = "Run was completed successfully."
+        else:
+            message = "Run was not successful. Please see above for error."
+        if getattr(sys, "frozen", False):
+            input(message + "\nPress enter to quit")
+        sys.exit(exitStatus)

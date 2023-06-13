@@ -1,6 +1,8 @@
 import typing
 import re
 import os
+
+import fbvsupport.fastaAnalysis
 from . import faidxReader
 from . import fastaDictReader
 from . import bedReader
@@ -178,19 +180,29 @@ def generateValidationReport(fastaPath:str, *bedPaths:str, verbose:bool=True) ->
     if not _VALIDATIONREPORT.passed:
         _VALIDATIONREPORT.addCritical("Stopping before further analysis due to the absence of expected files")
         return _VALIDATIONREPORT
-    faidxPath = makeFaidx(fastaPath)
-    if not faidxPath:
-        _VALIDATIONREPORT.addCritical("Unable to index FASTA file at %s" %fastaPath)
-    fastaDictPath = makeFastaDictionary(fastaPath)
-    if not fastaDictPath:
-        _VALIDATIONREPORT.addCritical("Unable to make a dictionary from FASTA file at %s" %fastaPath)
-    if not _VALIDATIONREPORT.passed:
-        _VALIDATIONREPORT.addCritical("Stopping before further analysis due to a corrupt or unreadable FASTA file at %s" %fastaPath)
-        return _VALIDATIONREPORT
-    if verbose:
-        print("Initial processing of FASTA file was successful. Starting validations.")
-    faidx = faidxReader.readFastaIndexFile(faidxPath)
-    fastaDict = fastaDictReader.readFastaDictFile(fastaDictPath)
+    if samtoolsRunner._SAMTOOLSPATH:
+        faidxPath = makeFaidx(fastaPath)
+        if not faidxPath:
+            _VALIDATIONREPORT.addCritical("Unable to index FASTA file at %s" %fastaPath)
+        fastaDictPath = makeFastaDictionary(fastaPath)
+        if not fastaDictPath:
+            _VALIDATIONREPORT.addCritical("Unable to make a dictionary from FASTA file at %s" %fastaPath)
+        if not _VALIDATIONREPORT.passed:
+            _VALIDATIONREPORT.addCritical("Stopping before further analysis due to a corrupt or unreadable FASTA file at %s" %fastaPath)
+            return _VALIDATIONREPORT
+        if verbose:
+            print("Initial processing of FASTA file was successful. Starting validations.")
+        faidx = faidxReader.readFastaIndexFile(faidxPath)
+        fastaDict = fastaDictReader.readFastaDictFile(fastaDictPath)
+    else:
+        print("Unable to find local Samtools installation. Analyzing FASTA with local packages.")
+        try:
+            faidx, fastaDict = fbvsupport.fastaAnalysis.analyzeFasta(fastaPath)
+        except Exception as err:
+            print("Error analyzing FASTA file at %s" %fastaPath)
+            print(err)
+            _VALIDATIONREPORT.addCritical("Stopping before further analysis due to a corrupt or unanalyzable FASTA file at %s" %fastaPath)
+            return _VALIDATIONREPORT
     bedDict = {}
     for bedPath in bedPaths:
         try:
